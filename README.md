@@ -27,3 +27,9 @@ Pour exécuter les tests :
 cd app
 go test -v
 ```
+
+#### 2. Conteneurisation (Docker)
+Un [Dockerfile](file:///c:/Users/nicoc/code/tp-ci-cd/app/Dockerfile) multi-stage optimisé et sécurisé a été mis en place dans le dossier `/app` :
+- **Multi-stage Build** : Le binaire est compilé dans une image `golang:1.21-alpine` puis transféré dans une image finale `alpine:3.19.1` très légère (taille minimale de l'image).
+- **Sécurité (Non-root)** : Un utilisateur et un groupe système non-privilégiés (`appuser:appgroup`) sont créés et utilisés via l'instruction `USER` pour éviter toute exécution en root.
+- **Optimisation** : Désactivation de CGO (`CGO_ENABLED=0`) et suppression des tables de symboles/informations de debug (`-ldflags="-w -s"`) pour réduire encore la taille du binaire.
