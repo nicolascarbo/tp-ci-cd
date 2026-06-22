@@ -1,0 +1,29 @@
+# Default values for my-app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  # GHCR will be used. Replace <github-username> with your actual username/organization in the CI pipeline
+  repository: ghcr.io/nicolascarbo/tp-ci-cd
+  pullPolicy: IfNotPresent
+  # Overridden by the CI pipeline during build/deploy
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
