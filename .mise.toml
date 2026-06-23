@@ -1,0 +1,28 @@
+[tools]
+go = "1.21"
+golangci-lint = "1.64.8"
+helm = "3.17.3"
+trivy = "0.63.0"
+kubeconform = "0.6.7"
+
+[tasks.lint]
+run = "golangci-lint run ./..."
+dir = "{{config_root}}/app"
+description = "Run Go linter"
+
+[tasks.test]
+run = "go test ./..."
+dir = "{{config_root}}/app"
+description = "Run Go tests"
+
+[tasks.security-scan]
+run = "trivy fs --exit-code 1 --severity HIGH,CRITICAL ."
+description = "Scan filesystem for HIGH/CRITICAL vulnerabilities"
+
+[tasks.helm-lint]
+run = "helm lint ./chart"
+description = "Lint Helm chart"
+
+[tasks.helm-validate]
+run = "helm template ./chart | kubeconform -kubernetes-version 1.33.0 -strict -"
+description = "Validate Helm manifests against K8s 1.33.0 schema"
