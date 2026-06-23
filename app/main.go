@@ -18,13 +18,17 @@ func main() {
 			return
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		fmt.Fprint(w, "<h1>Welcome to the TP CI/CD Go Application!</h1>")
+		if _, err := fmt.Fprint(w, "<h1>Welcome to the TP CI/CD Go Application!</h1>"); err != nil {
+			log.Printf("failed to write response: %v", err)
+		}
 	})
 
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		response := HealthResponse{Status: "OK"}
-		json.NewEncoder(w).Encode(response)
+		if err := json.NewEncoder(w).Encode(response); err != nil {
+			log.Printf("failed to encode response: %v", err)
+		}
 	})
 
 	log.Println("Starting server on port 8080...")
