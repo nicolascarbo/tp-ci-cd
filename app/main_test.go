@@ -17,7 +17,9 @@ func TestHealthEndpoint(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		response := HealthResponse{Status: "OK"}
-		json.NewEncoder(w).Encode(response)
+		if err := json.NewEncoder(w).Encode(response); err != nil {
+			t.Fatalf("failed to encode test response: %v", err)
+		}
 	})
 
 	handler.ServeHTTP(rr, req)
