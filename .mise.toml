@@ -1,8 +1,8 @@
 [tools]
 go = "1.21"
-golangci-lint = "1.64.8"
-helm = "3.17.3"
-trivy = "0.63.0"
+golangci-lint = "2.12.2"
+helm = "3.21.1"
+trivy = "0.71.2"
 kubeconform = "0.6.7"
 
 [tasks.lint]
