@@ -1,0 +1,36 @@
+[argocd-install]
+run = """
+kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml --server-side --force-conflicts
+kubectl wait --for=condition=available --timeout=180s deployment/argocd-server -n argocd
+echo "ArgoCD ready"
+"""
+description = "Install ArgoCD into the argocd namespace and wait for it to be ready"
+
+[argocd-bootstrap]
+run = "kubectl apply -f argocd/application.yaml"
+description = "Apply the ArgoCD Application manifest (run once after argocd-install)"
+depends = ["argocd-install"]
+
+[argocd-password]
+run = "kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d && echo"
+description = "Print the ArgoCD admin password"
+
+[argocd-ui]
+run = """
+echo "ArgoCD UI → https://localhost:8080  (user: admin)"
+echo "Password: $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d)"
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+"""
+description = "Print ArgoCD credentials and open port-forward to the UI (Ctrl+C to stop)"
+
+[argocd-status]
+run = "kubectl get application tp-ci-cd -n argocd -o wide 2>/dev/null || echo 'Application not found — run: mise run argocd-bootstrap'"
+description = "Show ArgoCD sync and health status for the tp-ci-cd application"
+
+[app-forward]
+run = """
+echo "App → http://localhost:8081"
+kubectl port-forward svc/tp-ci-cd -n tp-ci-cd 8081:80
+"""
+description = "Port-forward the app to http://localhost:8081 (Ctrl+C to stop)"
