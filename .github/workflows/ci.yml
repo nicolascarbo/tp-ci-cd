@@ -108,3 +108,12 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag ${{ steps.version.outputs.tag }}
           git push origin ${{ steps.version.outputs.tag }}
+
+      - name: Update image tag in values.yaml (GitOps)
+        run: |
+          sed -i "s|  tag: \".*\"|  tag: \"${{ steps.version.outputs.tag }}\"|" chart/values.yaml
+          grep -q "tag: \"${{ steps.version.outputs.tag }}\"" chart/values.yaml || { echo "ERROR: sed failed to update image tag in chart/values.yaml"; exit 1; }
+          git add chart/values.yaml
+          git diff --staged --quiet || git commit -m "chore(gitops): update image tag to ${{ steps.version.outputs.tag }} [skip ci]"
+          git pull --rebase origin master
+          git push origin HEAD:master
