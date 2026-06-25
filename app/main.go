@@ -18,7 +18,7 @@ func main() {
 			return
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		if _, err := fmt.Fprint(w, "<h1>Welcome to the TP CI/CD Go Application!</h1>"); err != nil {
+		if _, err := fmt.Fprint(w, "<h1>Bonjour l'oral de CICD</h1>"); err != nil {
 			log.Printf("failed to write response: %v", err)
 		}
 	})
